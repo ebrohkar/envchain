@@ -75,6 +75,9 @@ func TestApply_TransformError_PropagatesError(t *testing.T) {
 	if err == nil {
 		t.Fatal("expected error, got nil")
 	}
+	if !errors.Is(err, expectedErr) {
+		t.Errorf("expected wrapped error to contain %v, got %v", expectedErr, err)
+	}
 }
 
 func TestApply_DoesNotMutateInput(t *testing.T) {
