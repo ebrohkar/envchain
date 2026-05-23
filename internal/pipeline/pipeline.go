@@ -29,6 +29,11 @@ type Result struct {
 	Errors      []string
 }
 
+// OK returns true only when both the chain resolution and validation succeeded.
+func (r *Result) OK() bool {
+	return r.ChainOK && r.ValidatorOK
+}
+
 // Run executes the full pipeline against the provided chain.
 func Run(c *chain.Chain, rules map[string][]validator.Rule, opts Options) (*Result, error) {
 	if c == nil {
