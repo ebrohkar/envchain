@@ -57,6 +57,26 @@ func TestResolve_MissingReference(t *testing.T) {
 	}
 }
 
+// TestResolve_MultipleMissingReferences verifies that all missing variable names
+// are reported when a value references more than one undefined variable.
+func TestResolve_MultipleMissingReferences(t *testing.T) {
+	r := resolver.New(mockEnv(map[string]string{}))
+	got, missing := r.Resolve("${FOO}/${BAR}")
+	if got != "/" {
+		t.Errorf("expected '/', got %q", got)
+	}
+	if len(missing) != 2 {
+		t.Errorf("expected 2 missing vars, got %v", missing)
+	}
+	missingSet := map[string]bool{}
+	for _, m := range missing {
+		missingSet[m] = true
+	}
+	if !missingSet["FOO"] || !missingSet["BAR"] {
+		t.Errorf("expected FOO and BAR in missing, got %v", missing)
+	}
+}
+
 func TestResolveAll_HasMissing(t *testing.T) {
 	r := resolver.New(mockEnv(map[string]string{"DB_HOST": "localhost"}))
 	vars := map[string]string{
